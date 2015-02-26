@@ -34,7 +34,7 @@ public class Main {
             //System.out.println(JsonHandler.stringify(mpdParser));
             String location = mpdParser.getMPD().getLocation();
             location = location.substring(0, location.lastIndexOf("/")) + "/";
-            System.out.println(location);
+            //System.out.println(location);
 
             for (AdaptationSetBase adaptationSetBase : mpdParser.getMPD().getPeriod().getAdaptationSet()) {
                 String repId = adaptationSetBase.getRepresentation().getId();
@@ -43,8 +43,22 @@ public class Main {
                 init = init.replace("$RepresentationID$", repId);
                 FileUtils.copyURLToFile(new URL(location+init), new File(folder + init));
 
+                
+                //"media": "chunk_ctvideo_cfm4s_rid$RepresentationID$_cs$Time$_w664894557_mpd.m4s",
+                String media = adaptationSetBase.getSegmentTemplate().getMedia();
+                media = media.replace("$RepresentationID$",repId);
+                
+                long time = 0;
+                boolean firstGone = false;
                 for(SBase s :adaptationSetBase.getSegmentTemplate().getSegmentTimeline().getS()){
-                    
+                    if(!firstGone){
+                        firstGone = true;
+                        String mediaFinal  = media.replace("$$Time",time+"");
+                        FileUtils.copyURLToFile(new URL(location+mediaFinal), new File(folder + mediaFinal));
+                    }
+                    time = time + Long.parseLong(s.getD());
+                    String mediaFinal  = media.replace("$$Time",time+"");
+                    FileUtils.copyURLToFile(new URL(location+mediaFinal), new File(folder + mediaFinal));
                 }
             }
 
