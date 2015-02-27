@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.json.XML;
 
 import java.io.*;
+import java.net.SocketException;
 import java.net.URL;
 
 public class Main {
@@ -15,11 +16,16 @@ public class Main {
     private static void downloadFile(URL url,File file){
         try {
             if(file.exists()){
+                System.out.println("skipping file : " + file);
                 return;
             }
-            System.out.println("downloading file : "+file);
+            System.out.println("downloading file : " + file);
             FileUtils.copyURLToFile(url, file);
-        }catch (Exception e){
+        }catch (SocketException e){
+            System.err.println("-----------------------------------------------");
+            e.printStackTrace();
+        }catch (IOException e){
+            System.err.println("+++++++++++++++++++++++++++++++++++++++++++++++++");
             e.printStackTrace();
         }
     }
@@ -47,6 +53,11 @@ public class Main {
             String location = mpdParser.getMPD().getLocation();
             location = location.substring(0, location.lastIndexOf("/")) + "/";
             //System.out.println(location);
+            /**
+             * test was created using new by string builder
+             * remove reference to release it
+             */
+            test = null;
 
             for (AdaptationSetBase adaptationSetBase : mpdParser.getMPD().getPeriod().getAdaptationSet()) {
                 String repId = adaptationSetBase.getRepresentation().getId();
@@ -55,7 +66,6 @@ public class Main {
                 init = init.replace("$RepresentationID$", repId);
                downloadFile(new URL(location+init), new File(folder + init));
 
-                
                 //"media": "chunk_ctvideo_cfm4s_rid$RepresentationID$_cs$Time$_w664894557_mpd.m4s",
                 String media = adaptationSetBase.getSegmentTemplate().getMedia();
                 media = media.replace("$RepresentationID$",repId);
