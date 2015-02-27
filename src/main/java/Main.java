@@ -33,6 +33,8 @@ public class Main {
     }
     
     private static void deleteFile(String src){
+        //TODO remove this return
+        if(true)return;
         File file = new File(src);
         if(file.delete()){
             System.out.println("file deleted successfully : "+file);
@@ -61,7 +63,7 @@ public class Main {
     }
     
     public static int PRETTY_PRINT_INDENT_FACTOR = 4;
-    public static String folder = "/home/dheeraj/Desktop/offlineContent/";
+    public static String folder = /*"/home/dheeraj/Desktop/offlineContent/"*/"/home/ubuntu/dash/";
 
     public static void main(String[] args) throws IOException {
 

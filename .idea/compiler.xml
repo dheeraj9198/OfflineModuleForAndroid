@@ -25,5 +25,8 @@
         <module name="OfflineModule" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="OfflineModule" target="1.6" />
+    </bytecodeTargetLevel>
   </component>
 </project>
