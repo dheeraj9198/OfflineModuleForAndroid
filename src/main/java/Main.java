@@ -63,13 +63,13 @@ public class Main {
     }
     
     public static int PRETTY_PRINT_INDENT_FACTOR = 4;
-    public static String folder = /*"/home/dheeraj/Desktop/offlineContent/"*/"/home/ubuntu/dash/";
+    public static String folder = /*"/home/dheeraj/Desktop/offlineContent/"*/"C:\\Users\\windows 7\\Desktop\\Preparation\\test\\";
 
     public static void main(String[] args) throws IOException {
 
         File file = new File(folder+"manifestE.mpd");
         if(!file.exists()) {
-            downloadFile(new URL("http://54.86.202.143:1935/vod_android/mp4:sample.mp4/manifest.mpd"), new File(folder + "manifest.mpd"));
+            downloadFile(new URL("http://frontend.test.superprofs.com:1935/vod_android/mp4:sp_high_4.mp4/manifest.mpd"), new File(folder + "manifest.mpd"));
         }else{
             System.out.println("manifest already exists , decrypting and using the same");
             encrypt(folder + "manifestE.mpd",folder + "manifest.mpd");
@@ -107,7 +107,10 @@ public class Main {
                 String init = adaptationSetBase.getSegmentTemplate().getInitialization();
                 //"initialization": "chunk_ctvideo_cfm4s_rid$RepresentationID$_cinit_w664894557_mpd.m4s",
                 init = init.replace("$RepresentationID$", repId);
+                System.out.println(location+init);
+/*
                downloadFile(new URL(location+init), new File(folder + init));
+*/
 
                 //"media": "chunk_ctvideo_cfm4s_rid$RepresentationID$_cs$Time$_w664894557_mpd.m4s",
                 String media = adaptationSetBase.getSegmentTemplate().getMedia();
@@ -119,11 +122,13 @@ public class Main {
                     if(!firstGone){
                         firstGone = true;
                         String mediaFinal  = media.replace("$Time$",time+"");
-                        downloadFile(new URL(location+mediaFinal), new File(folder + mediaFinal));
+                        System.out.println(location+mediaFinal);
+                        //downloadFile(new URL(location+mediaFinal), new File(folder + mediaFinal));
                     }
                     time = time + Long.parseLong(s.getD());
                     String mediaFinal  = media.replace("$Time$",time+"");
-                    downloadFile(new URL(location+mediaFinal), new File(folder + mediaFinal));
+                    System.out.println(location+mediaFinal);
+                    //downloadFile(new URL(location+mediaFinal), new File(folder + mediaFinal));
                 }
             }
 
