@@ -63,13 +63,13 @@ public class Main {
     }
     
     public static int PRETTY_PRINT_INDENT_FACTOR = 4;
-    public static String folder = /*"/home/dheeraj/Desktop/offlineContent/"*/"/home/ubuntu/dash/";
+    public static String folder = "/home/dheeraj/Desktop/offlineContent/";
 
     public static void main(String[] args) throws IOException {
 
         File file = new File(folder+"manifestE.mpd");
         if(!file.exists()) {
-            downloadFile(new URL("http://54.86.202.143:1935/vod_android/mp4:sample.mp4/manifest.mpd"), new File(folder + "manifest.mpd"));
+            downloadFile(new URL("http://frontend.test.superprofs.com:1935/vod_android/mp4:sp_high_4.mp4/manifest.mpd"), new File(folder + "manifest.mpd"));
         }else{
             System.out.println("manifest already exists , decrypting and using the same");
             encrypt(folder + "manifestE.mpd",folder + "manifest.mpd");
@@ -91,7 +91,7 @@ public class Main {
             JSONObject xmlJSONObj = XML.toJSONObject(test);
             String jsonPrettyPrintString = xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
             //System.out.println(jsonPrettyPrintString);
-            MPDParser mpdParser = JsonHandler.parse(jsonPrettyPrintString, MPDParser.class);
+            MPDParser mpdParser = JsonHandler.parseNormal(jsonPrettyPrintString, MPDParser.class);
             //System.out.println(JsonHandler.stringify(mpdParser));
             String location = mpdParser.getMPD().getLocation();
             location = location.substring(0, location.lastIndexOf("/")) + "/";

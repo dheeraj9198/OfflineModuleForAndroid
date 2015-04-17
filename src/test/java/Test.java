@@ -1,36 +1,39 @@
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by dheeraj on 25/2/15.
  */
 public class Test {
+    public static void main(String[] args) throws Exception {
+        URL url = new URL("http://www.vision.caltech.edu/html-files/EE148-2005-Spring/pprs/viola04ijcv.pdf");
+        URL urlTemp = new URL("http://www.vision.caltech.edu/html-files/EE148-2005-Spring/pprs/viola04ijcv.pdf");
+        File fileTemp = new File(new File("/home/dheeraj/Desktop/test"),"tester.pdf");
 
-
-
-    public static void main(String[] args)throws Exception{
-        byte b = 7;
-        System.out.println(b);
-        System.out.println(~b);
-        System.out.println(~~b);
-
-        final byte[] buf = new byte[1024];
-        byte test;
-        final InputStream is = new FileInputStream("/home/dheeraj/Desktop/offlineContent/manifest.mpd");
-        final OutputStream os = new FileOutputStream("/home/dheeraj/Desktop/offlineContent/manifestE.mpd");
-        while (true) {
-            int n = is.read(buf);
-            if (n == -1) break;
-            for(int k =0;k<n;k++) {
-                test = buf[k];
-                if(test != -128) {
-                    buf[k] = (byte)~test;
-                }
-            }
-            os.write(buf, 0, n);
+        int length = (int) fileTemp.length();
+        if(length == urlTemp.openConnection().getContentLength()){
+            System.out.println("already downloaded");
+            return;
         }
-        os.close(); is.close();
+        URLConnection connection = url.openConnection();
+        connection.setRequestProperty("Range", "bytes=" + length + "-");
+        InputStream inputStream = connection.getInputStream();
+
+        FileOutputStream fileOutputStream = new FileOutputStream(fileTemp,true);
+
+        byte[] bytes = new byte[2048];
+        int k;
+        long count = 0;
+
+
+        while ((k = inputStream.read(bytes)) != -1) {
+            count = count + k;
+                fileOutputStream.write(bytes, 0, k);
+        }
+
+        System.out.println(count);
     }
 }
