@@ -52,7 +52,9 @@ public class FileServer extends NanoHTTPD {
         }
     }*/
 
+/*
     private static int time = 0;
+*/
 
     @Override
     public NanoHTTPD.Response serve(String uri, Method method,
@@ -60,13 +62,16 @@ public class FileServer extends NanoHTTPD {
                                     Map<String, String> files) {
         //Toast.makeText(context,"got request = "+uri,Toast.LENGTH_LONG).show();
         InputStream fis = null;
+        File file1 = null;
         try {
 /*
             fis = new FileInputStream(new File(data + File.separator + uri));
 */
-            fis = new FileInputStream(new File("/var/www/html/bideo.mp4"));
+            file1 = new File("/var/www/html/bideo.mp4");
+            fis = new FileInputStream(file1);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
         // video/mp2t
    /*     if (uri.contains("file")) {
@@ -84,14 +89,31 @@ public class FileServer extends NanoHTTPD {
         if (header.containsKey("range")) {
             String range = header.get("range").replace("bytes=", "");
             String[] strings = range.split("-");
+            Long aLong = 0L;
             try {
-                Long aLong = Long.parseLong(strings[0]);
+                aLong = Long.parseLong(strings[0]);
                 fis.skip(aLong);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            response = new NanoHTTPD.Response(Status.PARTIAL_CONTENT, "video/mp4", fis);
+            response.addHeader("Accept-Ranges", "bytes");
+            response.addHeader("Content-Length", String.valueOf((file1.length() - aLong)));
+            response.addHeader("Keep-Alive", "timeout=5, max=100");
+            response.addHeader("Connection", "Keep-Alive");
+            response.addHeader("Content-Type", "video/mp4");
+            response.addHeader("Content-Range", "bytes " + aLong + "-" + String.valueOf((file1.length()-1)) + "/" + String.valueOf(file1.length()));
+            System.out.println("here");
+        } else {
+            response = new NanoHTTPD.Response(Status.OK, "video/mp4", fis);
+            response.addHeader("Accept-Ranges", "bytes");
+            response.addHeader("Content-Length", String.valueOf(file1.length()));
+            response.addHeader("Keep-Alive", "timeout=5, max=100");
+            response.addHeader("Connection", "Keep-Alive");
+            response.addHeader("Content-Type", "video/mp4");
+            System.out.println("here");
         }
-        if (time == 0) {
+   /*     if (time == 0) {
             response = new NanoHTTPD.Response(Status.OK, "video/mp4", fis);
             response.addHeader("Accept-Ranges", "bytes");
             response.addHeader("Content-Length", "215966688");
@@ -125,7 +147,7 @@ public class FileServer extends NanoHTTPD {
         } else {
             response = null;
         }
-        time++;
+        time++;*/
         return response;
       /*  InputStream fis = null;
 
