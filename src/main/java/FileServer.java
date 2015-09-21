@@ -56,6 +56,8 @@ public class FileServer extends NanoHTTPD {
     private static int time = 0;
 */
 
+    private static int requestNumber = 0;
+
     @Override
     public NanoHTTPD.Response serve(String uri, Method method,
                                     Map<String, String> header, Map<String, String> parameters,
@@ -84,7 +86,8 @@ public class FileServer extends NanoHTTPD {
       /*  if (true) {
             return new NanoHTTPD.Response(Status.OK, "video/mp4", fis);
         }*/
-
+        System.out.print(requestNumber++);
+        System.out.println(header);
         Response response;
         if (header.containsKey("range")) {
             String range = header.get("range").replace("bytes=", "");
@@ -102,8 +105,7 @@ public class FileServer extends NanoHTTPD {
             response.addHeader("Keep-Alive", "timeout=5, max=100");
             response.addHeader("Connection", "Keep-Alive");
             response.addHeader("Content-Type", "video/mp4");
-            response.addHeader("Content-Range", "bytes " + aLong + "-" + String.valueOf((file1.length()-1)) + "/" + String.valueOf(file1.length()));
-            System.out.println("here");
+            response.addHeader("Content-Range", "bytes " + aLong + "-" + String.valueOf((file1.length() - 1)) + "/" + String.valueOf(file1.length()));
         } else {
             response = new NanoHTTPD.Response(Status.OK, "video/mp4", fis);
             response.addHeader("Accept-Ranges", "bytes");
@@ -111,7 +113,7 @@ public class FileServer extends NanoHTTPD {
             response.addHeader("Keep-Alive", "timeout=5, max=100");
             response.addHeader("Connection", "Keep-Alive");
             response.addHeader("Content-Type", "video/mp4");
-            System.out.println("here");
+            response.addHeader("Content-Range", "bytes " + 0 + "-" + String.valueOf((file1.length() - 1)) + "/" + String.valueOf(file1.length()));
         }
    /*     if (time == 0) {
             response = new NanoHTTPD.Response(Status.OK, "video/mp4", fis);
